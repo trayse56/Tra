@@ -18,5 +18,21 @@ jobs:
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           net user runneradmin MyP@ssw0rd123 
 
+      - name: Install OpenVPN via Chocolatey
+        run: choco install openvpn -y
+
+      - name: Configure OpenVPN
+        run: |
+          mkdir "$env:USERPROFILE\OpenVPN\config"
+          Set-Content -Path "$env:USERPROFILE\OpenVPN\config\open.ovpn" -Value "${{ secrets.OPENVPN_CONFIG }}"
+          Set-Content -Path "$env:USERPROFILE\OpenVPN\config\auth.txt" -Value "${{ secrets.OPENVPN_USERNAME }}`r`n${{ secrets.OPENVPN_PASSWORD }}"
+
+      - name: Connect to VPN
+        run: |
+          & "C:\Program Files\OpenVPN\bin\openvpn.exe" `
+          --config "$env:USERPROFILE\OpenVPN\config\open.ovpn" `
+          --auth-user-pass "$env:USERPROFILE\OpenVPN\config\auth.txt" 
+          
+        
 
       
