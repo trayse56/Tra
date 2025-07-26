@@ -23,16 +23,6 @@ jobs:
 
       - name: Configure OpenVPN
         run: |
-          mkdir "$env:USERPROFILE\OpenVPN\config"
-          Set-Content -Path "$env:USERPROFILE\OpenVPN\config\open.ovpn" -Value "${{ secrets.OPENVPN_CONFIG }}"
-          Set-Content -Path "$env:USERPROFILE\OpenVPN\config\auth.txt" -Value "${{ secrets.OPENVPN_USERNAME }}`r`n${{ secrets.OPENVPN_PASSWORD }}"
-
-      - name: Connect to VPN
-        run: |
-          & "C:\Program Files\OpenVPN\bin\openvpn.exe" `
-          --config "$env:USERPROFILE\OpenVPN\config\open.ovpn" `
-          --auth-user-pass "$env:USERPROFILE\OpenVPN\config\auth.txt" 
-          
-        
-
-      
+          $configPath = "$env:GITHUB_WORKSPACE\open.ovpn"
+          Write-Host "Connecting with config at $configPath"
+          & "C:\Program Files\OpenVPN\bin\openvpn.exe" --config "$configPath"
